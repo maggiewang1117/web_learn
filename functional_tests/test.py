@@ -32,12 +32,13 @@ class NewVistorTest(LiveServerTestCase):
 
         inputbox.send_keys(Keys.ENTER) # press enter
         edith_list_url = self.browser.current_url
-        self.assertRegex(edith_list_url, '/lists')
+        self.assertRegex(edith_list_url, '/lists/.+')
         self.check_for_row_in_list_table('1: Buy peacock feathers')
 
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_tag_name('tr')
-        self.check_for_row_in_list_table('1: Buy peacock feathers')    # "1: Buy paecock feathers" in To-Do list now
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('Use peacock feathers to make a fly')
+        inputbox.send_keys(Keys.ENTER)
+
         self.check_for_row_in_list_table('2: Use peacock feathers to make a fly')
         self.check_for_row_in_list_table('1: Buy peacock feathers')
 
@@ -63,4 +64,12 @@ class NewVistorTest(LiveServerTestCase):
         self.assertIn('Buy milk', page_text)
 
         self.fail('Finish the test!')
+
+    def test_layout_and_styling(self):
+        self.browser.get(self.live_server_url)
+        self.browser.set_window_size(1024, 768)
+
+        inputbox = self.browser.find_element_by_id('id_new_item')
+
+        self.assertAlmostEqual(inputbox.location['x'] + inputbox.size['width']/2, 512, delta=5)
 
